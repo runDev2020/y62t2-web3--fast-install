@@ -4,7 +4,8 @@ $running_timeout = 180;
 set_time_limit($running_timeout);
 
 // https://stackoverflow.com/questions/1653771/how-do-i-remove-a-directory-that-is-not-empty
-function deleteDirectory($dir) {
+function deleteDirectory($dir)
+{
     if (!file_exists($dir)) {
         return true;
     }
@@ -21,7 +22,6 @@ function deleteDirectory($dir) {
         if (!deleteDirectory($dir . DIRECTORY_SEPARATOR . $item)) {
             return false;
         }
-
     }
 
     return rmdir($dir);
@@ -32,22 +32,22 @@ function updateRunningStatus($env_data = null, $status = null)
     if ($status == null || $env_data == null) {
         die('code Err: call dev.');
     }
-    switch ($status){
+    switch ($status) {
         case 'running':
             // update running-status
             $env_data->timestamp = time();
             $env_data->running = true;
             file_put_contents('fast-3.json', json_encode($env_data));
-        break;
-        
+            break;
+
         case 'runned':
             // update runned-status
             $env_data->timestamp = 123;
             $env_data->running = false;
             file_put_contents('fast-3.json', json_encode($env_data));
-        break;
+            break;
 
-        default: 
+        default:
             die('code Err: call dev.');
     }
 
@@ -57,7 +57,8 @@ function updateRunningStatus($env_data = null, $status = null)
 function saveLog($text)
 {
     echo $text;
-    file_put_contents('log-fast-3.txt', "$text\n", FILE_APPEND);
+    // 19:15 2020-04-25
+    file_put_contents('log-fast-3.txt', "scode: " . $_POST['scode'] . " | time:" . time() . " | IP:" . $_SERVER['REMOTE_ADDR'] . " | $text\n", FILE_APPEND);
 }
 
 function generateWordpress($scode = null)
@@ -83,13 +84,13 @@ function generateWordpress($scode = null)
         saveLog('Err! Dir is exist.(โฟลเดอร์นี้มีอยู่แล้ว)');
         return 'err';
     }
-    
+
     // check another-running
     $env = file_get_contents('fast-3.json');
     $env_data = json_decode($env);
-    
+
     // running timeout 3นาที
-    if ( (time() - ($env_data->timestamp)) > ($GLOBALS['running_timeout'] + 12)) {
+    if ((time() - ($env_data->timestamp)) > ($GLOBALS['running_timeout'] + 12)) {
         $env_data->running = false;
     }
     if ($env_data->running == true) {
@@ -115,9 +116,9 @@ function generateWordpress($scode = null)
         echo '
         <div>
             <label style="color: green">สำเร็จ: </label>
-            <a href="http://projectsthep.com/webapps/61262620'.$scode.'-3/">
+            <a href="http://projectsthep.com/webapps/61262620' . $scode . '-3/">
                 link
-                <span>61262620'.$scode.'-3</span>
+                <span>61262620' . $scode . '-3</span>
             </a>
         </div>
         ';
@@ -140,11 +141,13 @@ if (!empty($_POST['scode'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Generate Wordpress</title>
 </head>
+
 <body>
     <h1>Generate Wordpress</h1>
     <form method="POST">
@@ -152,5 +155,14 @@ if (!empty($_POST['scode'])) {
         <input name="scode" type="text">
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+
+    <div>
+        <label style="color: red">หากใครอัพไว้แล้ว ให้เข้าไปที่ link : </label>
+        <a href="http://projectsthep.com/webapps/">
+            
+            <span>http://projectsthep.com/webapps/</span>
+        </a>
+    </div>
 </body>
+
 </html>
